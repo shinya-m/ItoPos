@@ -4,7 +4,6 @@
  */
 package db;
 
-import com.mysql.jdbc.*;
 import java.util.ArrayList;
 import obj.Customer;
 import java.sql.Connection;
@@ -14,7 +13,7 @@ import java.sql.SQLException;
 
 /**
  *
- * @author yasuhiro-i
+ * @author yasuhiro-i,shinya-m
  */
 public class JdbcUserDao implements UserDao {
 
@@ -26,8 +25,6 @@ public class JdbcUserDao implements UserDao {
 
     public boolean addUser(Customer user) {
         PreparedStatement stmt = null;
-        ResultSet rs = null;
-        boolean isExist = false;
         try {
             stmt = conn.prepareStatement("INSERT into user (name, point, mid, type, nickname) values(?, ?, ?, ?, ?);");
             stmt.setString(1, user.getName());
@@ -37,10 +34,6 @@ public class JdbcUserDao implements UserDao {
             stmt.setString(4, user.getType());
             stmt.setString(5, user.getNickName());
             stmt.executeUpdate();
-            //isExist = rs.next();
-            if (rs != null) {
-                rs.close();
-            }
 
             if (stmt != null) {
                 stmt.close();

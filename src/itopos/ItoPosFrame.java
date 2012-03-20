@@ -218,6 +218,10 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                 }
                 else if(e.getKeyCode()==27){//ESCで終了
                 	System.exit(0);
+                }else if(e.getKeyCode()==KeyEvent.VK_F5){//F5キー
+                	if (itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)){
+                		new CostForm(udao, user);
+                	}
                 }
                 super.keyPressed(e);
             }

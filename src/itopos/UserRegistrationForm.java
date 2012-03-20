@@ -52,6 +52,8 @@ public class UserRegistrationForm extends JDialog{
 
 	public UserRegistrationForm(String felicaId,UserDao dao) {
 		initGUI(felicaId,dao);
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 	private void initGUI(final String felicaId,final UserDao dao) {
