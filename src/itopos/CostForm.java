@@ -35,13 +35,13 @@ public class CostForm extends JDialog{
 	private JTextField cost;
 	private JButton ok;
 
-	public CostForm(UserDao dao,Customer user) {
-		initGUI(dao,user);
+	public CostForm(UserDao dao,Customer user,ItoPosFrame frame) {
+		initGUI(dao,user,frame);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 	
-	private void initGUI(final UserDao dao,final Customer user) {
+	private void initGUI(final UserDao dao,final Customer user,final ItoPosFrame frame) {
 		try {
 			GroupLayout thisLayout = new GroupLayout((JComponent)getContentPane());
 			getContentPane().setLayout(thisLayout);
@@ -59,6 +59,8 @@ public class CostForm extends JDialog{
 							int extra=Integer.parseInt(cost.getText());
 							dao.updateUser(user.getFelicaId(),user.getCost()+extra,user.getAllConsumedPoint());
 							dispose();
+							frame.resetSystem();
+							frame.requestResetSystem(1,true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

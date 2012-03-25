@@ -137,24 +137,8 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                         return;
 
                     }
+
                     
-                    String bcode = barcodeField.getText();
-                    if(!idao.isBuppinExist(bcode)){//読み取ったバーコードの商品がない場合は登録フォームを出す
-                    	new ItemRegistrationForm(idao,ItoPosFrame.this,bcode);
-                    	return;
-//                      barcodeField.setText("");
-//                      messageLabel.setText("存在しないバーコードです");
-//                      FutureTask task = new FutureTask(new Sound(constant.SoundFile.DENY));
-//                      new Thread(task).start();
-                    }
-                    
-                    
-                    
-                    if (!itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)) {//学生証が読み込まれていなければ
-                        messageLabel.setText("認証してください");
-                        requestResetSystem(3);
-                        return;
-                    }
                     if (barcodeField.getText().equals(constant.Barcode.CANCEL)) {//読み取ったバーコードがキャンセルならば
                         messageLabel.setText("キャンセルされました");
                         requestResetSystem(3);
@@ -206,7 +190,23 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 
                         }
                     }
+                    
+                    String bcode = barcodeField.getText();
+                    if(!idao.isBuppinExist(bcode)){//読み取ったバーコードの商品がない場合は登録フォームを出す
+                    	new ItemRegistrationForm(idao,ItoPosFrame.this,bcode);
+                    	return;
+//                      barcodeField.setText("");
+//                      messageLabel.setText("存在しないバーコードです");
+//                      FutureTask task = new FutureTask(new Sound(constant.SoundFile.DENY));
+//                      new Thread(task).start();
+                    }
 
+                    if (!itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)) {//学生証が読み込まれていなければ
+                        messageLabel.setText("認証してください");
+                        requestResetSystem(3);
+                        return;
+                    }
+                    
                     if (idao.isBuppinExist(bcode)) {//読み取ったバーコードの商品がある場合
                         Item item = idao.selectByBarCode(bcode);
                         model.addElement(item.getName() + ", " + item.getSold_cost() + "円");
@@ -220,7 +220,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                 	System.exit(0);
                 }else if(e.getKeyCode()==KeyEvent.VK_F5){//F5キー
                 	if (itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)){
-                		new CostForm(udao, user);
+                		new CostForm(udao, user,ItoPosFrame.this);
                 	}
                 }
                 super.keyPressed(e);
@@ -440,7 +440,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
     private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
 
-    private void resetSystem() {
+    public void resetSystem() {
         barcodeField.setText("");
         messageLabel.setText("ようこそ");
         barcodeField.requestFocus();
@@ -459,7 +459,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         countDown1.setCount(sec);
     }
 
-    private void requestResetSystem(int sec, boolean editable) {
+    public void requestResetSystem(int sec, boolean editable) {
         barcodeField.setEnabled(editable);
         countDown1.setCount(sec);
     }

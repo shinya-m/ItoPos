@@ -72,7 +72,7 @@ public class ItemRegistrationForm extends JDialog{
 		setTitle("Item registration");
 		setLocationRelativeTo(null);
 		setVisible(true);
-		this.setSize(329, 270);
+		this.setSize(329, 298);
 		{
 			goods_name = new JLabel();
 			goods_name.setText("\u5546\u54c1\u540d");
