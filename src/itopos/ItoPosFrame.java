@@ -194,6 +194,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                     String bcode = barcodeField.getText();
                     if(!idao.isBuppinExist(bcode)){//読み取ったバーコードの商品がない場合は登録フォームを出す
                     	new ItemRegistrationForm(idao,ItoPosFrame.this,bcode);
+                    	barcodeField.setText("");
                     	return;
 //                      barcodeField.setText("");
 //                      messageLabel.setText("存在しないバーコードです");
