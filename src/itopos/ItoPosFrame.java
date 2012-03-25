@@ -505,7 +505,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 //                new Thread(task).start();
 //                this.itoposStatus = constant.Status.ItoPosStatus.REBOOT;
 //                requestResetSystem(3);
-            	new UserRegistrationForm(user.getFelicaId(),udao);
+            	new UserRegistrationForm(udpFelica.getMID(),udao);
             }
         }
         if (message.equals("TIME_OUT")) {

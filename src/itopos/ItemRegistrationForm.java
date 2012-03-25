@@ -19,6 +19,7 @@ import javax.swing.LayoutStyle;
 import db.ItemDao;
 
 import obj.Item;
+import util.JAN2Name;
 
 
 /**
@@ -79,6 +80,7 @@ public class ItemRegistrationForm extends JDialog{
 		}
 		{
 			name = new JTextField();
+			name.setText(JAN2Name.search(bcode));
 		}
 		{
 			barcode = new JLabel();
