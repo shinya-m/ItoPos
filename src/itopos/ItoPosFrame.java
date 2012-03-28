@@ -52,6 +52,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
     Customer user;
     Timer timer;
     sound.Sound sound;
+    boolean updateItem;
 
     void requestRePaint() {
         this.configPanel.validate();
@@ -201,20 +202,24 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 //                      FutureTask task = new FutureTask(new Sound(constant.SoundFile.DENY));
 //                      new Thread(task).start();
                     }
-
-                    if (!itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)) {//学生証が読み込まれていなければ
-                        messageLabel.setText("認証してください");
-                        requestResetSystem(3);
-                        return;
-                    }
                     
                     if (idao.isBuppinExist(bcode)) {//読み取ったバーコードの商品がある場合
-                        Item item = idao.selectByBarCode(bcode);
-                        model.addElement(item.getName() + ", " + item.getSold_cost() + "円");
-                        bucket.add(item);
-                        barcodeField.setText("");
-                        barcodeField.requestFocus();
-                        messageLabel.setText("かごに入れました");
+                    	if(itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)){//学生証が読み込まれていれば
+                    		Item item = idao.selectByBarCode(bcode);
+                            model.addElement(item.getName() + ", " + item.getSold_cost() + "円");
+                            bucket.add(item);
+                            barcodeField.setText("");
+                            barcodeField.requestFocus();
+                            messageLabel.setText("かごに入れました");
+                    	}else if(updateItem){//在庫追加モードならば
+                    		new ItemRegistrationForm(idao, ItoPosFrame.this).set(idao.selectByBarCode(bcode));
+                    		barcodeField.setText("");
+                    	}else{
+                    		messageLabel.setText("認証してください");
+                            requestResetSystem(3);
+                            return;
+                    	}
+                        
                     }
                 }
                 else if(e.getKeyCode()==27){//ESCで終了
@@ -223,6 +228,9 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                 	if (itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)){
                 		new CostForm(udao, user,ItoPosFrame.this);
                 	}
+                }else if(e.getKeyCode()==KeyEvent.VK_F1){//F1キー、在庫追加モード
+                	updateItem=true;
+                	return;
                 }
                 super.keyPressed(e);
             }
@@ -512,6 +520,10 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
             resetSystem();
         }
 
+    }
+    
+    public void cancelUpdateItem(){
+    	updateItem=false;
     }
 
     public void actionPerformed(ActionEvent e) {

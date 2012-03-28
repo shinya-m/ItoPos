@@ -60,7 +60,7 @@ public class UserRegistrationForm extends JDialog{
 		try {
 			GroupLayout thisLayout = new GroupLayout((JComponent)getContentPane());
 			getContentPane().setLayout(thisLayout);
-			this.setSize(258, 259);
+			this.setSize(258, 268);
 			{
 				nameLabel = new JLabel();
 				nameLabel.setText("\u540d\u524d");
