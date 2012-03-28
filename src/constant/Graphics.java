@@ -10,6 +10,6 @@ package constant;
  */
 public interface Graphics {
 
-    public static final String CENTER_LOGO = "C:\\itopos\\pic\\logo.png";
-    public static final String CENTER_LOGO_FOLDER = "C:\\itopos\\pic\\";
+    public static final String CENTER_LOGO = "C:\\Users\\itopos\\Dropbox\\itopos\\pic\\logo.png";
+    public static final String CENTER_LOGO_FOLDER = "C:\\Users\\itopos\\Dropbox\\itopos\\pic\\";
 }

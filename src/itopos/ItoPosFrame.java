@@ -14,19 +14,15 @@ import db.DaoFactry;
 import db.HistoryDao;
 import db.ItemDao;
 import db.UserDao;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Time;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.FutureTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -34,6 +30,8 @@ import obj.Customer;
 import obj.History;
 import obj.Item;
 import sound.Sound;
+import twitter.TwitterAccount;
+import twitter4j.TwitterException;
 
 /**
  *
@@ -53,6 +51,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
     Timer timer;
     sound.Sound sound;
     boolean updateItem;
+    TwitterAccount tw;
 
     void requestRePaint() {
         this.configPanel.validate();
@@ -77,7 +76,16 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         centerImagePanel.setFolder(constant.Graphics.CENTER_LOGO_FOLDER);
 
         sound = new Sound("hogehoge");
-
+        
+        try {
+			tw=new TwitterAccount(this);
+		} catch (TwitterException e1) {
+			e1.printStackTrace();
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 
         barcodeField.addKeyListener(new KeyAdapter() {
@@ -160,11 +168,16 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 
                         if (itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)) {//学生証が読み込まれていれば
                             int cost = 0;
+                            int count=0;
+                            StringBuilder sb=new StringBuilder();
 
                             for (Item item : bucket) {
                                 cost += item.getSold_cost();
                                 //item.setPro_num(item.getPro_num()-1);
                                 Item tmp = idao.selectByBarCode(item.getBarcode());
+                                sb.append(tmp.getName());
+                                if(count<bucket.size()-1)sb.append(",");
+                                count++;
                                 int stock = tmp.getPro_num() - 1;
                                 item.setPro_num(stock);//在庫を減らす
                                 idao.updateBuppin(item);
@@ -187,6 +200,15 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 
                             itoposStatus = constant.Status.ItoPosStatus.REBOOT;
                             requestResetSystem(3);
+                            
+                            try {
+                            	String s=user.getNickName()+"さんが";
+                            	String ss="を購入しました！";
+                            	String tweet=s+tw.shrinkString(sb.toString(),140-s.length()-ss.length())+ss;
+        						tw.tweet(tweet);
+        					} catch (TwitterException e1) {
+        						e1.printStackTrace();
+        					}
                             return;
 
                         }
@@ -194,7 +216,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                     
                     String bcode = barcodeField.getText();
                     if(!idao.isBuppinExist(bcode)){//読み取ったバーコードの商品がない場合は登録フォームを出す
-                    	new ItemRegistrationForm(idao,ItoPosFrame.this,bcode);
+                    	new ItemRegistrationForm(idao,ItoPosFrame.this,bcode,tw);
                     	barcodeField.setText("");
                     	return;
 //                      barcodeField.setText("");
@@ -212,14 +234,13 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                             barcodeField.requestFocus();
                             messageLabel.setText("かごに入れました");
                     	}else if(updateItem){//在庫追加モードならば
-                    		new ItemRegistrationForm(idao, ItoPosFrame.this).set(idao.selectByBarCode(bcode));
+                    		new ItemRegistrationForm(idao, ItoPosFrame.this,tw).set(idao.selectByBarCode(bcode));
                     		barcodeField.setText("");
                     	}else{
                     		messageLabel.setText("認証してください");
                             requestResetSystem(3);
                             return;
                     	}
-                        
                     }
                 }
                 else if(e.getKeyCode()==27){//ESCで終了

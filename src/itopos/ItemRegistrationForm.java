@@ -19,6 +19,7 @@ import javax.swing.LayoutStyle;
 import db.ItemDao;
 
 import obj.Item;
+import twitter.TwitterAccount;
 import util.JAN2Name;
 
 
@@ -50,7 +51,6 @@ public class ItemRegistrationForm extends JDialog{
 		}
 	}
 
-
 	private JTextField name;
 	private JTextField cost;//仕入れ値
 	private JLabel barcode;
@@ -66,9 +66,11 @@ public class ItemRegistrationForm extends JDialog{
 	private JButton ok,cancel;
 	private static final String[] TYPE={"お菓子","飲み物","カップ麺","その他"};
 	private ItoPosFrame frame;
+	private TwitterAccount tw;
 	
-	public ItemRegistrationForm(final ItemDao dao,Frame owner,final String bcode) {
+	public ItemRegistrationForm(final ItemDao dao,Frame owner,final String bcode,final TwitterAccount tw) {
 		super(owner);
+		this.tw=tw;
 		GroupLayout thisLayout = new GroupLayout((JComponent)getContentPane());
 		getContentPane().setLayout(thisLayout);
 		setTitle("Item registration");
@@ -120,6 +122,7 @@ public class ItemRegistrationForm extends JDialog{
 							item.setSold_cost(Integer.parseInt(hogesold));
 							item.setType((String)type_box.getSelectedItem());
 							dao.addBuppin(item);
+							tw.tweet("新入荷："+hogename+" "+hogesold+"円、"+hogenum+"個");
 							dispose();
 						}catch(Exception e){
 							e.printStackTrace();
@@ -232,8 +235,9 @@ public class ItemRegistrationForm extends JDialog{
 			.addContainerGap(18, 18));
 	}
 	
-	public ItemRegistrationForm(final ItemDao dao,Frame owner) {
+	public ItemRegistrationForm(final ItemDao dao,Frame owner,final TwitterAccount tw) {
 		super(owner);
+		this.tw=tw;
 		frame=(ItoPosFrame)owner;
 		GroupLayout thisLayout = new GroupLayout((JComponent)getContentPane());
 		getContentPane().setLayout(thisLayout);
@@ -278,6 +282,7 @@ public class ItemRegistrationForm extends JDialog{
 							hogenum.length()>0 && hogesold.length()>0){
 						Item item=new Item();
 						try{
+							Item old = dao.selectByBarCode(barcode_label.getText());
 							item.setBarcode(barcode_label.getText());
 							item.setCost(Integer.parseInt(hogecost));
 							item.setName(hogename);
@@ -286,6 +291,8 @@ public class ItemRegistrationForm extends JDialog{
 							item.setType((String)type_box.getSelectedItem());
 							dao.updateBuppin(item);
 							frame.cancelUpdateItem();
+							tw.tweet("商品に変更がありました。 "+hogename+" 価格"+old.getSold_cost()
+									+"→"+hogesold+"、在庫"+old.getPro_num()+"→"+hogenum);
 							dispose();
 						}catch(Exception e){
 							frame.cancelUpdateItem();
