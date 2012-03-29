@@ -181,6 +181,13 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                                 int stock = tmp.getPro_num() - 1;
                                 item.setPro_num(stock);//在庫を減らす
                                 idao.updateBuppin(item);
+                                if(stock==0){
+                                	try {
+										tw.tweet(item.getName()+"の在庫が無くなりました。完売御礼！");
+									} catch (TwitterException e1) {
+										e1.printStackTrace();
+									}
+                                }
                             }
                             int aftercost = user.getCost() - cost;//残金
                             double allcost = user.getAllConsumedPoint();
@@ -204,7 +211,8 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                             try {
                             	String s=user.getNickName()+"さんが";
                             	String ss="を購入しました！";
-                            	String tweet=s+tw.shrinkString(sb.toString(),140-s.length()-ss.length())+ss;
+                            	String sss=user.getNickName()+"はこれまでに"+(int)user.getAllConsumedPoint()+"円使ってますよ。";
+                            	String tweet=s+tw.shrinkString(sb.toString(),140-s.length()-ss.length()-sss.length())+ss+sss;
         						tw.tweet(tweet);
         					} catch (TwitterException e1) {
         						e1.printStackTrace();

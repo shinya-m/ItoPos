@@ -292,7 +292,7 @@ public class ItemRegistrationForm extends JDialog{
 							dao.updateBuppin(item);
 							frame.cancelUpdateItem();
 							tw.tweet("商品に変更がありました。 "+hogename+" 価格"+old.getSold_cost()
-									+"→"+hogesold+"、在庫"+old.getPro_num()+"→"+hogenum);
+									+"円→"+hogesold+"円、在庫"+old.getPro_num()+"個→"+hogenum+"個");
 							dispose();
 						}catch(Exception e){
 							frame.cancelUpdateItem();
