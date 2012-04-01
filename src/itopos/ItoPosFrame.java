@@ -211,7 +211,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                             try {
                             	String s=user.getNickName()+"さんが";
                             	String ss="を購入しました！";
-                            	String sss=user.getNickName()+"はこれまでに"+(int)user.getAllConsumedPoint()+"円使ってますよ。";
+                            	String sss=user.getNickName()+"さんはこれまでに"+((int)user.getAllConsumedPoint()+cost)+"円使ってますよ。";
                             	String tweet=s+tw.shrinkString(sb.toString(),140-s.length()-ss.length()-sss.length())+ss+sss;
         						tw.tweet(tweet);
         					} catch (TwitterException e1) {
