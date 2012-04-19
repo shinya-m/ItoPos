@@ -52,6 +52,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
     sound.Sound sound;
     boolean updateItem;
     TwitterAccount tw;
+    ShoppingBasketDialog bag;
 
     void requestRePaint() {
         this.configPanel.validate();
@@ -211,7 +212,8 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                             try {
                             	String s=user.getNickName()+"さんが";
                             	String ss="を購入しました！";
-                            	String sss=user.getNickName()+"さんはこれまでに"+((int)user.getAllConsumedPoint()+cost)+"円使ってますよ。";
+                            	String sss=user.getNickName()+"さんはこれまでに"+((int)user.getAllConsumedPoint()+cost)+"円使ってますよ。残金は"
+                            		+aftercost+"円です。";
                             	String tweet=s+tw.shrinkString(sb.toString(),140-s.length()-ss.length()-sss.length())+ss+sss;
         						tw.tweet(tweet);
         					} catch (TwitterException e1) {
@@ -236,6 +238,8 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                     if (idao.isBuppinExist(bcode)) {//読み取ったバーコードの商品がある場合
                     	if(itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)){//学生証が読み込まれていれば
                     		Item item = idao.selectByBarCode(bcode);
+                    		if(bag==null)bag=new ShoppingBasketDialog(ItoPosFrame.this,user.getCost());
+                    		bag.add(new String[]{item.getName(),String.valueOf(item.getSold_cost())});
                             model.addElement(item.getName() + ", " + item.getSold_cost() + "円");
                             bucket.add(item);
                             barcodeField.setText("");
@@ -495,6 +499,10 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         //timer.start();
         barcodeField.setEnabled(false);
         countDown1.setCount(sec);
+        if(bag!=null){
+        	bag.dispose();
+        	bag=null;
+        }
     }
 
     public void requestResetSystem(int sec, boolean editable) {

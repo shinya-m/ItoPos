@@ -15,5 +15,5 @@ public interface Status {
         AUTHORIZED,
         REBOOT,
     }
-
+ 
 }
