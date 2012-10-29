@@ -53,6 +53,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
     boolean updateItem;
     TwitterAccount tw;
     ShoppingBasketDialog bag;
+    private Thread th;
 
     void requestRePaint() {
         this.configPanel.validate();
@@ -69,7 +70,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         model = new DefaultListModel();
         bucket = new ArrayList<Item>();
         udpFelica = new UdpFelica(50005);
-        Thread th = new Thread(udpFelica);
+        th = new Thread(udpFelica);
         th.start();
         createCollegues();
         jListBacket.setModel(model);
@@ -517,6 +518,9 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 
     @Override
     public void collegueChanged(String message) {
+    	this.idao = DaoFactry.createItemDao();
+        this.udao = DaoFactry.createUserDao();
+        this.hdao = DaoFactry.createHistoryDao();
         if (message.equals("GETPACKET")) {
             user = udao.selectUser(udpFelica.getMID());
             if (!this.itoposStatus.equals(constant.Status.ItoPosStatus.INIT)) {
