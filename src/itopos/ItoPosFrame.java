@@ -21,6 +21,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.concurrent.FutureTask;
 import javax.swing.DefaultListModel;
@@ -70,6 +72,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         model = new DefaultListModel();
         bucket = new ArrayList<Item>();
         udpFelica = new UdpFelica(50005);
+        backuptimer();
         th = new Thread(udpFelica);
         th.start();
         createCollegues();
@@ -78,7 +81,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         centerImagePanel.setFolder(constant.Graphics.CENTER_LOGO_FOLDER);
 
         sound = new Sound("hogehoge");
-        
+
         try {
 			tw=new TwitterAccount(this);
 		} catch (TwitterException e1) {
@@ -149,7 +152,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 
                     }
 
-                    
+
                     if (barcodeField.getText().equals(constant.Barcode.CANCEL)) {//読み取ったバーコードがキャンセルならば
                         messageLabel.setText("キャンセルされました");
                         requestResetSystem(3);
@@ -209,7 +212,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 
                             itoposStatus = constant.Status.ItoPosStatus.REBOOT;
                             requestResetSystem(3);
-                            
+
                             try {
                             	String s=user.getNickName()+"さんが";
                             	String ss="を購入しました！";
@@ -224,7 +227,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 
                         }
                     }
-                    
+
                     String bcode = barcodeField.getText();
                     if(!idao.isBuppinExist(bcode)){//読み取ったバーコードの商品がない場合は登録フォームを出す
                     	new ItemRegistrationForm(idao,ItoPosFrame.this,bcode,tw);
@@ -235,7 +238,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
 //                      FutureTask task = new FutureTask(new Sound(constant.SoundFile.DENY));
 //                      new Thread(task).start();
                     }
-                    
+
                     if (idao.isBuppinExist(bcode)) {//読み取ったバーコードの商品がある場合
                     	if(itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)){//学生証が読み込まれていれば
                     		Item item = idao.selectByBarCode(bcode);
@@ -562,11 +565,21 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         }
 
     }
-    
+
     public void cancelUpdateItem(){
     	updateItem=false;
     }
 
     public void actionPerformed(ActionEvent e) {
     }
+
+    public void backuptimer(){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            java.util.Timer t = new java.util.Timer();
+            t.scheduleAtFixedRate(new Backup(), sdf.parse("2012/11/08 00:00:00"), 86400000);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
 }
