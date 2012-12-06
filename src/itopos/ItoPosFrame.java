@@ -263,7 +263,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
                 	System.exit(0);
                 }else if(e.getKeyCode()==KeyEvent.VK_F5){//F5キー
                 	if (itoposStatus.equals(constant.Status.ItoPosStatus.AUTHORIZED)){
-                		new CostForm(udao, user,ItoPosFrame.this);
+                		new CostForm(udao, user,ItoPosFrame.this,tw);
                 	}
                 }else if(e.getKeyCode()==KeyEvent.VK_F1){//F1キー、在庫追加モード
                 	updateItem=true;
@@ -577,7 +577,7 @@ public class ItoPosFrame extends javax.swing.JFrame implements Mediator, ActionL
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             java.util.Timer t = new java.util.Timer();
-            t.scheduleAtFixedRate(new Backup(), sdf.parse("2012/11/08 00:00:00"), 86400000);
+            t.scheduleAtFixedRate(new Backup(), sdf.parse("2012/11/12 00:00:00"), 86400000);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

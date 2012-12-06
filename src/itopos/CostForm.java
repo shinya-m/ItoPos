@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 
 import obj.Customer;
+import twitter.TwitterAccount;
 
 import db.UserDao;
 
@@ -34,13 +35,15 @@ import db.UserDao;
 public class CostForm extends JDialog{
 	private JTextField cost;
 	private JButton ok;
+	private TwitterAccount tw;
 
-	public CostForm(UserDao dao,Customer user,ItoPosFrame frame) {
+	public CostForm(UserDao dao,Customer user,ItoPosFrame frame, TwitterAccount tw) {
 		initGUI(dao,user,frame);
 		setLocationRelativeTo(null);
 		setVisible(true);
+		this.tw = tw;
 	}
-	
+
 	private void initGUI(final UserDao dao,final Customer user,final ItoPosFrame frame) {
 		try {
 			GroupLayout thisLayout = new GroupLayout((JComponent)getContentPane());
@@ -52,7 +55,7 @@ public class CostForm extends JDialog{
 				ok = new JButton();
 				ok.setText("\u8ffd\u52a0");
 				ok.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						try {
@@ -61,6 +64,14 @@ public class CostForm extends JDialog{
 							dispose();
 							frame.resetSystem();
 							frame.requestResetSystem(1,true);
+
+							// tweet
+							int x = user.getCost() + extra;
+							String s=user.getNickName()+"さんが";
+                            String ss="円チャージしました！";
+                            String sss=user.getNickName()+"さんの残金は" + x + "円です。";
+                            String tweet=s+ extra +ss+sss;
+                            tw.tweet(tweet);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
